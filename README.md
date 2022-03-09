@@ -15,3 +15,5 @@ Inspect the browser and show the console.
 
 Then click on any of the RequestClasses in the left pane - the "Uncaught RangeError: Maximum call stack size exceeded" error will be seen in the console.
 ![image](https://user-images.githubusercontent.com/3487727/157394123-44f66dd8-dfa2-4ffe-b606-e0ae32f0c718.png)
+
+Edit the GenerateClasses.tt and change the serviceClassesToGenerate to a lower value (514 for Edge, 616 for Chrome) and re-run the solution.  The error no longer occurs.

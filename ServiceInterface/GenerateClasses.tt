@@ -1,0 +1,83 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+<#
+int serviceClassesToGenerate = 617;			// 514 works in Edge, and 616 in Chrome.  Anything more that those respective values and it fails
+int requestPropertiesToGenerate = 3;
+int responsePropertiesToGenerate = 3;
+
+/*
+Findings:
+
+Edge
+====
+serviceClassesToGenerate = 514 
+requestPropertiesToGenerate = 3
+responsePropertiesToGenerate = 3
+Result : OK
+
+serviceClassesToGenerate = 514 
+requestPropertiesToGenerate = 3
+responsePropertiesToGenerate = 3
+Result : NOT OK - "Uncaught RangeError: Maximum call stack size exceeded"
+
+Chrome
+======
+serviceClassesToGenerate = 616 
+requestPropertiesToGenerate = 3
+responsePropertiesToGenerate = 3
+Result : OK
+
+serviceClassesToGenerate = 617 
+requestPropertiesToGenerate = 3
+responsePropertiesToGenerate = 3
+Result : NOT OK - "Uncaught RangeError: Maximum call stack size exceeded"
+*/
+#>
+using ServiceStack;
+
+namespace ServiceInterface
+{
+<#
+for(int serviceClassNumber=1; serviceClassNumber<=serviceClassesToGenerate; serviceClassNumber++)
+{
+	string serviceClassName = "ServiceClass" + serviceClassNumber.ToString();
+	string requestClassName = "RequestClass" + serviceClassNumber.ToString();
+	string responseClassName = "ResponseClass" + serviceClassNumber.ToString();
+#>
+	public class <#=requestClassName #>
+	{
+<#
+for(int requestPropertyNumber=1; requestPropertyNumber<=requestPropertiesToGenerate; requestPropertyNumber++)
+{
+	string requestPropertyName = "requestProperty" + requestPropertyNumber.ToString();
+#>
+		public string <#=requestPropertyName#> { get; set; }
+<#}#>
+	}
+
+	public class <#=responseClassName #>
+	{
+<#
+for(int responsePropertyNumber=1; responsePropertyNumber<=responsePropertiesToGenerate; responsePropertyNumber++)
+{
+	string responsePropertyName = "responseProperty" + responsePropertyNumber.ToString();
+#>
+		public string <#=responsePropertyName#> { get; set; }
+<#}#>
+	}
+
+	public class <#=serviceClassName #> : Service
+	{
+		public <#=responseClassName #> Get(<#=requestClassName #> request)
+		{
+			return new <#=responseClassName#>();
+		}		
+	}
+<#	
+}
+#>
+}
